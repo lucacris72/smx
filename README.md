@@ -72,6 +72,13 @@ The recommended way to install the dependencies and run the repository is throug
 
 All commands below assume you start from the repository root and that you have docker installed on your system.
 
+Clone the repository and move into the project directory first:
+
+```bash
+git clone https://github.com/lucacris72/smx.git
+cd smx
+```
+
 ### 1. Use the prebuilt container image
 
 Pull the latest image published on GitHub Container Registry:
@@ -149,14 +156,8 @@ cd SMX_dev/src
 make TOP=tb_smx_fu_lut sim
 ```
 
-Other focused testbenches are also available:
+For more details on the unit-level flow, available testbenches, and generated artifacts, see `SMX_dev/src/README.md`.
 
-```bash
-make TOP=tb_smx_fu_lut_max sim
-make TOP=tb_smx_fu_lut_acc sim
-make TOP=tb_smx_fu_lut_exp sim
-make TOP=tb_smx_fu_lut_sigm sim
-```
 
 Full-core simulation on CV32E40P:
 
