@@ -1,4 +1,5 @@
 # SMX: A RISC-V ISA Extension for Scale-Adaptive Quantized Softmax
+[![DOI](https://zenodo.org/badge/1185697535.svg)](https://doi.org/10.5281/zenodo.19119111)
 
 This repository contains the RTL, firmware benchmarks, validation scripts, and a docker container for envirorment reproducibility for **SMX**, a custom softmax extension integrated into the **OpenHW Group CV32E40P** core.
 
