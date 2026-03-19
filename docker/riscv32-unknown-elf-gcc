@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+exec /opt/riscv/bin/riscv32-unknown-elf-gcc.real "$@"
