@@ -85,6 +85,18 @@ Open an interactive shell inside the published container:
 ./docker/shell.sh
 ```
 
+On Windows PowerShell, use `docker run` directly:
+
+```powershell
+docker run --rm -it `
+  -e HOME=/tmp `
+  -e RISCV=/opt/riscv `
+  -v "${PWD}:/workspace" `
+  -w /workspace `
+  ghcr.io/lucacris72/smx:latest `
+  bash
+```
+
 You can also execute a single command without entering an interactive shell:
 
 ```bash
@@ -105,6 +117,18 @@ Open an interactive shell inside the container:
 
 ```bash
 ./docker/shell.sh
+```
+
+On Windows PowerShell, replace the image name with the locally built one:
+
+```powershell
+docker run --rm -it `
+  -e HOME=/tmp `
+  -e RISCV=/opt/riscv `
+  -v "${PWD}:/workspace" `
+  -w /workspace `
+  smx-test-env:local `
+  bash
 ```
 
 You can also execute a single command without entering an interactive shell:
@@ -248,6 +272,8 @@ For larger vectors, the speedup is still substantial, but loop-control overhead 
 
 This section summarizes the scripts used to reproduce the main numerical and performance results reported in the project report. The commands below assume you already completed the Docker-based quickstart and built the container image.
 
+If you are using Windows, first start the container shell with the PowerShell command shown above, then run the commands below from inside that shell.
+
 ### 1. Numerical validation and plots
 
 The LUT validation flow in `SMX_dev/lut_validation/` reproduces the numerical analysis behind the adaptive softmax approximation, including the results discussed in Tables 1 and 2 and the rank-ordered plots corresponding to Figures 3 and 4.
@@ -287,6 +313,8 @@ The script produces:
 - terminal output with `FP32`, `SMX`, and `SW Model` cycle counts for each tested `N`,
 - `example_tb/core/softmax_performance.csv`,
 - `example_tb/core/softmax_performance.png`.
+
+When this sweep is run inside the Docker container, the `FP32` cycle counts can be slightly different from the values reported in the paper because the container ships with a slightly different compiler version. When the same benchmark is built with the locally compiled toolchain described above, the `FP32` results match the paper exactly.
 
 ### 3. Single benchmark run
 
