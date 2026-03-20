@@ -213,10 +213,7 @@ python -m pip install -r requirements.txt
 
 For the RISC-V toolchain, follow the official instructions in the [`riscv-gnu-toolchain`](https://github.com/riscv-collab/riscv-gnu-toolchain) repository and build the Newlib toolchain for the target used by this project.
 
-The local flow expects an ELF bare-metal toolchain configured for:
-
-- `--with-arch=rv32gc_zicsr`
-- `--with-abi=ilp32`
+The following commands clone the repository, check out the tested commit, and build the toolchain with the appropriate configuration for this project:
 
 ```bash
 mkdir -p toolchain/riscv
@@ -224,11 +221,9 @@ cd toolchain/riscv
 git clone https://github.com/riscv-collab/riscv-gnu-toolchain.git
 cd riscv-gnu-toolchain
 ./configure --prefix="$(pwd)/../install" \
-  --disable-linux \
-  --disable-multilib \
-  --disable-gdb \
   --with-arch=rv32gc_zicsr \
-  --with-abi=ilp32
+  --with-abi=ilp32 \
+  --enable-multilib 
 make -j"$(nproc)"
 ```
 
