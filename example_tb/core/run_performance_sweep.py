@@ -4,6 +4,8 @@ import sys
 import os
 import re
 import csv
+import shutil
+from pathlib import Path
 try:
     import matplotlib.pyplot as plt
     MATPLOTLIB_AVAILABLE = True
@@ -15,6 +17,11 @@ import numpy as np
 N_SWEEP = [8, 16, 32, 64, 128, 256, 512, 1024]
 OUTPUT_CSV = "softmax_performance.csv"
 OUTPUT_PLOT = "softmax_performance.png"
+SCRIPT_DIR = Path(__file__).resolve().parent
+REPO_ROOT = SCRIPT_DIR.parent.parent
+LUT_GEN_SCRIPT = REPO_ROOT / "SMX_dev" / "src" / "gen_c_luts.py"
+LUT_SOURCE_DIR = LUT_GEN_SCRIPT.parent
+LUT_FILES = ("smx_lut1d.hex", "smx_lut2d.hex")
 
 def run_command(cmd, capture_output=False):
     # print(f"Running: {cmd}")
@@ -48,10 +55,29 @@ def parse_cycles(output):
             
     return fp32, smx, sw
 
+def ensure_lut_hex_files():
+    print("Generating SMX LUT hex files...")
+
+    try:
+        subprocess.check_call([sys.executable, str(LUT_GEN_SCRIPT)])
+    except subprocess.CalledProcessError as e:
+        print(f"Error running LUT generator: {e}")
+        sys.exit(1)
+
+    for lut_name in LUT_FILES:
+        src = LUT_SOURCE_DIR / lut_name
+        dst = SCRIPT_DIR / lut_name
+        if not src.exists():
+            print(f"Error: Expected LUT file was not generated: {src}")
+            sys.exit(1)
+        shutil.copy2(src, dst)
+
 def main():
     print("========================================")
     print("    SOFTMAX PERFORMANCE SWEEP JOB")
     print("========================================")
+
+    ensure_lut_hex_files()
     
     results = [] # List of tuples (N, fp32, smx, sw)
     

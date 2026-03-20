@@ -4,6 +4,7 @@ RISCV ?= /opt/riscv
 RISCV_EXE_PREFIX := $(RISCV)/bin/riscv32-unknown-elf-
 RISCV_INCLUDE_DIR := $(RISCV)/riscv32-unknown-elf/include
 RISCV_LIB_DIR := $(RISCV)/riscv32-unknown-elf/lib
+PYTHON ?= python3
 
 VERILATOR ?= verilator
 
@@ -31,6 +32,9 @@ HELLO_WORLD_HEX := custom/hello_world.hex
 SOFTMAX_COMPARISON_ELF := custom/softmax_comparison.elf
 SOFTMAX_COMPARISON_HEX := custom/softmax_comparison.hex
 SIM_EXE := obj_dir/Vtb_top
+SMX_LUT_GEN := $(RTLSRC_HOME)/SMX_dev/src/gen_c_luts.py
+SMX_LUT_1D := smx_lut1d.hex
+SMX_LUT_2D := smx_lut2d.hex
 
 FIRMWARE ?= $(HELLO_WORLD_HEX)
 
@@ -53,6 +57,7 @@ help:
 	@echo "  make hello-world-run"
 	@echo "  make softmax-comparison-run"
 	@echo "  make verilator-build"
+	@echo "  make smx-luts"
 	@echo "  make clean"
 
 %.hex: %.elf
@@ -73,8 +78,14 @@ $(SIM_EXE): $(RTLSRC_TB_PKG) $(RTLSRC_TB) sim_main.cpp $(VERILATOR_MANIFEST)
 .PHONY: verilator-build
 verilator-build: $(SIM_EXE)
 
+.PHONY: smx-luts
+smx-luts: $(SMX_LUT_GEN)
+	$(PYTHON) $(SMX_LUT_GEN)
+	cp $(RTLSRC_HOME)/SMX_dev/src/$(SMX_LUT_1D) $(SMX_LUT_1D)
+	cp $(RTLSRC_HOME)/SMX_dev/src/$(SMX_LUT_2D) $(SMX_LUT_2D)
+
 .PHONY: verilator-run
-verilator-run: $(SIM_EXE) $(FIRMWARE)
+verilator-run: $(SIM_EXE) $(FIRMWARE) smx-luts
 	./$(SIM_EXE) +firmware=$(FIRMWARE)
 
 .PHONY: hello-world-run
@@ -91,4 +102,5 @@ clean:
 	rm -f custom/*.elf custom/*.hex
 	rm -f transcript vsim.wlf vsim.dbg trace_core*.log objdump *.vcd
 	rm -f sim_ram.bin sim_ram.hex
+	rm -f $(SMX_LUT_1D) $(SMX_LUT_2D)
 	rm -f softmax_performance.csv softmax_performance.png
